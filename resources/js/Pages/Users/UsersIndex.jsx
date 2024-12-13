@@ -61,7 +61,11 @@ const UsersIndex = ({ listaUsuarios }) => {
                                             {user.email}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                            {user.role}
+                                            {user.role === "superadmin"
+                                                ? "Super Administrador"
+                                                : user.role === "admin"
+                                                ? "Administrador"
+                                                : "Visitante"}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                             {dayjs(user.created_at).fromNow()}
