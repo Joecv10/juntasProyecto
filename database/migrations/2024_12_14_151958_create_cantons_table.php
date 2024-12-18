@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('provincias', function (Blueprint $table) {
-            $table->id('provincia_id');
-            $table->string('cod_provincia')->unique(); // cod_provincia (adjust length if needed)
-            $table->string('provincia'); // provincia
-
+        Schema::create('cantones', function (Blueprint $table) {
+            $table->id('canton_id');
+            $table->foreignId('provincia_id')->constrained('provincias', 'provincia_id')->onDelete('cascade');
+            $table->string('cod_canton'); // cod_canton
+            $table->string('canton');    // canton
             // $table->timestamps();
+
+
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('provincias');
+        Schema::dropIfExists('cantones');
     }
 };
