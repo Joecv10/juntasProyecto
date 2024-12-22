@@ -80,7 +80,7 @@ export default function Register() {
                         </div>
 
                         <div className="mt-4">
-                            <InputLabel htmlFor="role" value="Role" />
+                            <InputLabel htmlFor="role" value="Rol" />
 
                             <select
                                 id="role"
