@@ -42,4 +42,9 @@ export const oficinaTecnica = [
         provincia: "Pastaza",
         label: "Oficina Técnica Pastaza",
     },
+    {
+        id: 6,
+        provincia: "Chimborazo",
+        label: "Oficina Técnica Alausí",
+    },
 ];

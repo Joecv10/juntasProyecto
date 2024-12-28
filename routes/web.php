@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\LugarController;
+use App\Http\Controllers\JuntasRiegoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -30,8 +32,19 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::resource('users', UsersController::class)
-    // ->only(['index', 'store'])
-    ->middleware(['auth', 'verified']);
+
+
+
+Route::resource('users', UsersController::class)->middleware(['auth', 'verified']);
+
+Route::resource('juntasRiego', JuntasRiegoController::class,)->middleware(['auth', 'verified']);
+
+Route::get('/buscar-provincias', [LugarController::class, 'buscarProvincias'])->name('provincias.buscar');
+Route::get('/buscar-cantones', [LugarController::class, 'buscarCantones'])->name('cantones.buscar');
+Route::get('/buscar-parroquias', [LugarController::class, 'buscarParroquias'])->name('parroquias.buscar');
+Route::get('/provincia-by-name', [LugarController::class, 'buscarProvinciaByName'])->name('provincia.byname');
+
+
+
 
 require __DIR__ . '/auth.php';
