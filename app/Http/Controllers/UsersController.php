@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\OficinaTecnica;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +23,11 @@ class UsersController extends Controller
     {
         return inertia('Dashboard', [
             'message' => 'This is the Users Index',
-            'listaUsuarios' => User::all()
+            'listaUsuarios' => DB::table('users')
+                ->join('oficinas_tecnicas', 'users.cod_oficina_tecnica', '=', 'oficinas_tecnicas.cod_oficina_tecnica')
+                ->join('roles', 'users.cod_role', '=', 'roles.cod_role')
+                ->select('users.id', 'users.names', 'users.last_names', 'users.email', 'users.created_at',  'oficinas_tecnicas.oficina_tecnica', 'roles.role')
+                ->get(),
         ]);
     }
 

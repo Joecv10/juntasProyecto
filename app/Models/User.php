@@ -24,7 +24,8 @@ class User extends Authenticatable
         'provincia_oficina_tecnica',
         'email',
         'password',
-        'role'
+        'cod_role',
+        'cod_oficina_tecnica',
     ];
 
     /**

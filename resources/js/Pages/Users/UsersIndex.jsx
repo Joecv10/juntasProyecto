@@ -1,9 +1,11 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { capitalizeEachWord } from "../../../utilFunctions/functions.js";
 
 dayjs.extend(relativeTime);
 
 const UsersIndex = ({ listaUsuarios }) => {
+    console.log("List Users:", listaUsuarios);
     return (
         <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
@@ -61,11 +63,7 @@ const UsersIndex = ({ listaUsuarios }) => {
                                             {user.email}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                            {user.role === "superadmin"
-                                                ? "Super Administrador"
-                                                : user.role === "admin"
-                                                ? "Administrador"
-                                                : "Visitante"}
+                                            {capitalizeEachWord(user.role)}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                             {dayjs(user.created_at).fromNow()}
