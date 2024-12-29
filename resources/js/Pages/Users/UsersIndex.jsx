@@ -57,7 +57,11 @@ const UsersIndex = ({ listaUsuarios }) => {
                                         }
                                     >
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                                            {`${user.names} ${user.last_names}`}
+                                            {`${capitalizeEachWord(
+                                                user.names
+                                            )} ${capitalizeEachWord(
+                                                user.last_names
+                                            )}`}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                             {user.email}
@@ -66,7 +70,7 @@ const UsersIndex = ({ listaUsuarios }) => {
                                             {capitalizeEachWord(user.role)}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                            {dayjs(user.created_at).fromNow()}
+                                            {dayjs(user.created_at).toNow()}
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium">
                                             <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-500">
