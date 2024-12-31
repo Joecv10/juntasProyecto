@@ -27,7 +27,7 @@ class UsersController extends Controller
             'listaUsuarios' => DB::table('users')
                 ->join('oficinas_tecnicas', 'users.cod_oficina_tecnica', '=', 'oficinas_tecnicas.cod_oficina_tecnica')
                 ->join('roles', 'users.cod_role', '=', 'roles.cod_role')
-                ->select('users.id', 'users.names', 'users.last_names', 'users.email', 'users.created_at',  'oficinas_tecnicas.oficina_tecnica', 'roles.role')
+                ->select('users.id', 'users.names', 'users.last_names', 'users.email', 'users.created_at',  'oficinas_tecnicas.oficina_tecnica', 'roles.cod_role', 'roles.role')
                 ->where('users.is_active', '=', 1)
                 ->get(),
         ]);
@@ -101,8 +101,16 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $users)
+    public function destroy($id)
     {
-        //
+        // Fetch the user
+        $user = User::findOrFail($id);
+
+        // Instead of deleting, set is_active to 0
+        $user->is_active = 0;
+        $user->save();
+
+        // Then redirect back to the dashboard (or anywhere you want)
+        return redirect()->route('dashboard');
     }
 }
