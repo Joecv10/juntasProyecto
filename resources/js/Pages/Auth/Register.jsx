@@ -4,17 +4,19 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { oficinaTecnica, roles } from "../../../dataSets/set.js";
+import { capitalizeEachWord } from "../../../../resources/utilFunctions/functions.js";
 
-export default function Register() {
+export default function Register({ oficinas_tecnicas, roles }) {
+    console.log(oficinas_tecnicas);
+    console.log(roles);
     const { data, setData, post, processing, errors, reset } = useForm({
         names: "",
         last_names: "",
         email: "",
         password: "",
         password_confirmation: "",
-        role: "",
-        provincia_oficina_tecnica: "",
+        cod_role: "",
+        cod_oficina_tecnica: "",
     });
 
     const submit = (e) => {
@@ -27,7 +29,7 @@ export default function Register() {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Register" />
+            <Head title="Registrar Usuario" />
 
             <div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
                 <div className="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg">
@@ -83,11 +85,11 @@ export default function Register() {
                             <InputLabel htmlFor="role" value="Rol" />
 
                             <select
-                                id="role"
-                                name="role"
-                                value={data.role}
+                                id="cod_role"
+                                name="cod_role"
+                                value={data.cod_role}
                                 onChange={(e) =>
-                                    setData("role", e.target.value)
+                                    setData("cod_role", e.target.value)
                                 }
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 required
@@ -96,14 +98,17 @@ export default function Register() {
                                     Elegir rol del usuario
                                 </option>
                                 {roles.map((rol) => (
-                                    <option key={rol.id} value={rol.rol}>
-                                        {rol.label}
+                                    <option
+                                        key={rol.cod_role}
+                                        value={rol.cod_role}
+                                    >
+                                        {capitalizeEachWord(rol.role)}
                                     </option>
                                 ))}
                             </select>
 
                             <InputError
-                                message={errors.role}
+                                message={errors.cod_role}
                                 className="mt-2"
                             />
                         </div>
@@ -114,12 +119,12 @@ export default function Register() {
                             />
 
                             <select
-                                id="provincia_oficina_tecnica"
-                                name="provincia_oficina_tecnica"
-                                value={data.provincia_oficina_tecnica}
+                                id="cod_oficina_tecnica"
+                                name="cod_oficina_tecnica"
+                                value={data.cod_oficina_tecnica}
                                 onChange={(e) =>
                                     setData(
-                                        "provincia_oficina_tecnica",
+                                        "cod_oficina_tecnica",
                                         e.target.value
                                     )
                                 }
@@ -129,18 +134,20 @@ export default function Register() {
                                 <option value="" disabled>
                                     Elegir la oficina técnica
                                 </option>
-                                {oficinaTecnica.map((oficina) => (
+                                {oficinas_tecnicas.map((oficina) => (
                                     <option
-                                        key={oficina.id}
-                                        value={oficina.provincia}
+                                        key={oficina.cod_oficina_tecnica}
+                                        value={oficina.cod_oficina_tecnica}
                                     >
-                                        {oficina.label}
+                                        {capitalizeEachWord(
+                                            oficina.oficina_tecnica
+                                        )}
                                     </option>
                                 ))}
                             </select>
 
                             <InputError
-                                message={errors.provincia_oficina_tecnica}
+                                message={errors.cod_oficina_tecnica}
                                 className="mt-2"
                             />
                         </div>

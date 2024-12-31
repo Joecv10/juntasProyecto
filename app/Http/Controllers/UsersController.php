@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\OficinaTecnica;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +24,12 @@ class UsersController extends Controller
     {
         return inertia('Dashboard', [
             'message' => 'This is the Users Index',
-            'listaUsuarios' => User::all()
+            'listaUsuarios' => DB::table('users')
+                ->join('oficinas_tecnicas', 'users.cod_oficina_tecnica', '=', 'oficinas_tecnicas.cod_oficina_tecnica')
+                ->join('roles', 'users.cod_role', '=', 'roles.cod_role')
+                ->select('users.id', 'users.names', 'users.last_names', 'users.email', 'users.created_at',  'oficinas_tecnicas.oficina_tecnica', 'roles.cod_role', 'roles.role')
+                ->where('users.is_active', '=', 1)
+                ->get(),
         ]);
     }
 
@@ -30,7 +38,10 @@ class UsersController extends Controller
      */
     public function create()
     {
-        return inertia('Auth/Register');
+        return inertia('Auth/Register', [
+            'oficinas_tecnicas' => OficinaTecnica::all(),
+            'roles' => Role::all(),
+        ]);
     }
 
     /**
@@ -43,17 +54,17 @@ class UsersController extends Controller
             'last_names' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|string|in:superadmin,admin,visitor',
-            'provincia_oficina_tecnica' => 'required|string',
+            'cod_role' => 'required|int',
+            'cod_oficina_tecnica' => 'required|int',
         ]);
 
         $user = User::create([
-            'names' => $request->names,
-            'last_names' => $request->last_names,
-            'email' => $request->email,
+            'names' => strtoupper(trim($request->names)),
+            'last_names' => strtoupper(trim($request->last_names)),
+            'email' => strtolower(trim($request->email)),
             'password' => Hash::make($request->password),
-            'role' => $request->role,
-            'provincia_oficina_tecnica' => $request->provincia_oficina_tecnica,
+            'cod_role' => $request->cod_role,
+            'cod_oficina_tecnica' => $request->cod_oficina_tecnica,
         ]);
 
         event(new Registered($user));
@@ -90,8 +101,16 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $users)
+    public function destroy($id)
     {
-        //
+        // Fetch the user
+        $user = User::findOrFail($id);
+
+        // Instead of deleting, set is_active to 0
+        $user->is_active = 0;
+        $user->save();
+
+        // Then redirect back to the dashboard (or anywhere you want)
+        return redirect()->route('dashboard');
     }
 }

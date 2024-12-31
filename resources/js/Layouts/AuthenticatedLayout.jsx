@@ -5,6 +5,7 @@ import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
 import { useState } from "react";
+import { capitalizeEachWord } from "./../../utilFunctions/functions.js";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
@@ -32,7 +33,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Inicio
                                 </NavLink>
                             </div>
-                            {user.role === "superadmin" ? (
+                            {user.cod_role === 1 ? (
                                 <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                     <NavLink
                                         href={route("users.create")}
@@ -66,7 +67,11 @@ export default function AuthenticatedLayout({ header, children }) {
                                                 type="button"
                                                 className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                             >
-                                                {`${user.names} ${user.last_names}`}
+                                                {`${capitalizeEachWord(
+                                                    user.names
+                                                )} ${capitalizeEachWord(
+                                                    user.last_names
+                                                )}`}
 
                                                 <svg
                                                     className="-me-0.5 ms-2 h-4 w-4"
@@ -172,14 +177,14 @@ export default function AuthenticatedLayout({ header, children }) {
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route("profile.edit")}>
-                                Profile
+                                Perfil
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
                                 href={route("logout")}
                                 as="button"
                             >
-                                Log Out
+                                Cerrar Sesión
                             </ResponsiveNavLink>
                         </div>
                     </div>

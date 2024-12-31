@@ -16,10 +16,10 @@ class SuperAdminSeeder extends Seeder
         User::create([
             'names' => 'Joe Steven',
             'last_names' => 'Concha Vasquez',
-            'provincia_oficina_tecnica' => 'Chimborazo',
             'email' => 'joeconchavasquez@gmail.com',
             'password' => bcrypt('12345678'),
-            'role' => 'superadmin',
+            'cod_oficina_tecnica' => 1,
+            'cod_role' => 1,
         ]);
     }
 }
