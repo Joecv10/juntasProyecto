@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('cantidad_beneficiarios');
             $table->boolean('is_active')->default(true);
             $table->foreignId('cod_tipo_riego')->constrained('tipo_riego', 'cod_tipo_riego')->onDelete('cascade');
-            $table->foreignId('cod_direccion_zonal')->constrained('direccion_zonal', 'cod_direccion_zonal')->onDelete('cascade');
+            $table->foreignId('cod_oficina_tecnica')->constrained('oficinas_tecnicas', 'cod_oficina_tecnica')->onDelete('cascade');
             $table->foreignId('cod_parroquia')->constrained('parroquias', 'parroquia_id')->onDelete('cascade');
         });
     }

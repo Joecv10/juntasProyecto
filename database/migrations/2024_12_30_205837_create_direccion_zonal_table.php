@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('direccion_zonal', function (Blueprint $table) {
             $table->id('cod_direccion_zonal');
             $table->string('direccion_zonal', 100);
-            $table->foreignId('cod_oficina_tecnica')->constrained('oficinas_tecnicas', 'cod_oficina_tecnica')->onDelete('cascade');
         });
     }
 

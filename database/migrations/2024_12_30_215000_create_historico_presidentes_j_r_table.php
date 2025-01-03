@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('fecha_solicitud_nombramiento')->nullable();
             $table->date('fecha_emision_nombramiento')->nullable();
             $table->string('Observaciones', 255)->nullable();
+            $table->boolean('is_active')->default(true);
         });
     }
 
