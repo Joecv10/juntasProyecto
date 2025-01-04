@@ -4,11 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\Provincia;
 use App\Models\Canton;
+use App\Models\OficinaTecnica;
 use App\Models\Parroquia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LugarController extends Controller
 {
+
+    public function getProvincia($cod_oficina_tecnica)
+    {
+        // Assuming OficinaTecnica has a relationship with Provincia
+        $oficina = DB::table('oficinas_tecnicas')
+            ->join('provincias', 'provincias.provincia_id', '=', 'oficinas_tecnicas.id_provincia')
+            ->select('provincias.provincia_id', 'provincias.provincia')
+            ->where('oficinas_tecnicas.cod_oficina_tecnica', '=', $cod_oficina_tecnica)
+            ->first();
+
+        if (!$oficina || !$oficina->provincia) {
+            return response()->json(['message' => 'Provincia not found.'], 404);
+        }
+
+        return response()->json([
+            'id' => $oficina->provincia_id,
+            'provincia' => $oficina->provincia,
+        ]);
+    }
+
     public function buscarProvincias(Request $request)
     {
         $term = $request->get('term', '');

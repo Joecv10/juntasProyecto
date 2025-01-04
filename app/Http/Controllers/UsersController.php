@@ -23,7 +23,6 @@ class UsersController extends Controller
     public function index(): Response
     {
         return inertia('Dashboard', [
-            'message' => 'This is the Users Index',
             'listaUsuarios' => DB::table('users')
                 ->join('oficinas_tecnicas', 'users.cod_oficina_tecnica', '=', 'oficinas_tecnicas.cod_oficina_tecnica')
                 ->join('roles', 'users.cod_role', '=', 'roles.cod_role')

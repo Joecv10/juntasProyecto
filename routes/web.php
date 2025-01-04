@@ -43,6 +43,8 @@ Route::get('/buscar-provincias', [LugarController::class, 'buscarProvincias'])->
 Route::get('/buscar-cantones', [LugarController::class, 'buscarCantones'])->name('cantones.buscar');
 Route::get('/buscar-parroquias', [LugarController::class, 'buscarParroquias'])->name('parroquias.buscar');
 Route::get('/provincia-by-name', [LugarController::class, 'buscarProvinciaByName'])->name('provincia.byname');
+Route::get('/oficina-tecnica/{cod_oficina_tecnica}/provincia', [LugarController::class, 'getProvincia'])->name('oficina-tecnica.provincia');
+
 
 
 

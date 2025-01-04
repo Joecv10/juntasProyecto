@@ -14,8 +14,8 @@ class SuperAdminSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'names' => 'Joe Steven',
-            'last_names' => 'Concha Vasquez',
+            'names' => 'JOE STEVEN',
+            'last_names' => 'CONCHA VASQUEZ',
             'email' => 'joeconchavasquez@gmail.com',
             'password' => bcrypt('12345678'),
             'cod_oficina_tecnica' => 1,
