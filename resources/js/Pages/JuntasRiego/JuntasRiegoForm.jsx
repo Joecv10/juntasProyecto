@@ -1,13 +1,50 @@
 import { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, usePage, useForm } from "@inertiajs/react";
 import axios from "axios";
 import { capitalizeEachWord } from "../../../utilFunctions/functions.js";
+import TextInput from "@/Components/TextInput.jsx";
+import InputLabel from "@/Components/InputLabel.jsx";
+import InputError from "@/Components/InputError.jsx";
+import SelectComponent from "@/Components/Select.jsx";
 
 const JuntasRiegoIndex = () => {
     const { user } = usePage().props.auth;
 
     const { cod_oficina_tecnica } = user;
+
+    const { tipo_riego } = usePage().props;
+
+    const { tipo_presidente } = usePage().props;
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        num_carpeta_junta_riego: "",
+        junta_riego: "",
+        is_legalizada: "",
+        fecha_solicitud: "",
+        fecha_resolucion: "",
+        num_resolucion: "",
+        cantidad_beneficiarios: "",
+        cod_tipo_riego: "",
+        cod_oficina_tecnica: cod_oficina_tecnica,
+
+        // Presidente provisional
+        presidente_provisional: "",
+        cedula_presidente_junta_riego_p: "",
+        nombres_presidente_junta_riego_p: "",
+        email_presidente_junta_riego_p: "",
+        telefono_presidente_junta_riego_p: "",
+        fecha_nombramiento_presidente_junta_riego_p: "",
+        fecha_solicitud_nombramiento_presi_p: "",
+        fecha_emision_nombramiento_presi_p: "",
+
+        // Presidente electo
+        presidente_electo: "",
+        cedula_presidente_junta_riego_e: "",
+        nombres_presidente_junta_riego_e: "",
+        email_presidente_junta_riego_e: "",
+        telefono_presidente_junta_riego_e: "",
+    });
 
     // States for Provincia:
     const [provinceQuery, setProvinceQuery] = useState(""); // Pre-filled with provincia name
@@ -50,7 +87,7 @@ const JuntasRiegoIndex = () => {
                     })
                 );
                 // data => { provincia_id, provincia }
-                console.log(data);
+                // console.log(data);
                 // Set selectedProvince
                 setSelectedProvince({
                     id: data.id,
@@ -159,22 +196,42 @@ const JuntasRiegoIndex = () => {
             alert("Faltan datos: provincia, cantón o parroquia");
             return;
         }
-        // Aquí harías un axios.post o Inertia.post a tu ruta de guardado
-        alert(
-            `Guardando:\n` +
-                `Provincia ID: ${selectedProvince.id} (${selectedProvince.nombre})\n` +
-                `Canton ID: ${selectedCanton.id} (${selectedCanton.nombre})\n` +
-                `Parroquia ID: ${selectedParish.id} (${selectedParish.nombre})\n`
-        );
+        const formData = {
+            ...data,
+            provincia: selectedProvince,
+            canton: selectedCanton,
+            parroquia: selectedParish,
+            presidente_provisional: 1,
+            presidente_electo: 2,
+        };
+        console.log("Form Data to be Submitted:", formData);
     };
+
+    const onChangeHandler = (fieldId) => (event) => {
+        setData(fieldId, event.target.value);
+    };
+
+    // Opciones select
+    const isLegalizadaOptions = [
+        { value: "1", label: "Sí" },
+        { value: "0", label: "No" },
+    ];
+
+    const tipoRiego = tipo_riego.map((tipo_riego) => ({
+        value: tipo_riego.cod_tipo_riego,
+        label: tipo_riego.tipo_riego,
+    }));
 
     return (
         <AuthenticatedLayout>
             <Head title="Juntas Riego" />
 
             <div className="flex min-h-screen flex-col bg-gray-100 pt-6 sm:pt-0">
-                <div className="mt-6 w-full max-w-5xl mx-auto overflow-hidden bg-white px-6 py-4 shadow-md sm:rounded-lg">
+                <div className="mb-6 mt-6 w-full max-w-5xl mx-auto overflow-hidden bg-white px-6 py-4 shadow-md sm:rounded-lg">
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="p-6 text-gray-900">
+                            {`Datos de la Junta de Riego`}
+                        </div>
                         {/* PROVINCIA */}
                         <div className="relative">
                             <label
@@ -294,8 +351,471 @@ const JuntasRiegoIndex = () => {
                             </div>
                         </div>
 
+                        {/* Número de carpeta */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="num_carpeta_junta_riego"
+                                value={"Número de Carpeta"}
+                            />
+                            <TextInput
+                                id="num_carpeta_junta_riego"
+                                type="number"
+                                name="num_carpeta_junta_riego"
+                                value={data.num_carpeta_junta_riego}
+                                className="mt-1 block w-full"
+                                autoComplete="num_carpeta_junta_riego"
+                                onChange={onChangeHandler(
+                                    "num_carpeta_junta_riego"
+                                )}
+                                required
+                            />
+                            <InputError
+                                message={errors.num_carpeta_junta_riego}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* Junta de Riego */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="junta_riego"
+                                value={"Junta de Riego"}
+                            />
+                            <TextInput
+                                id="junta_riego"
+                                type="text"
+                                name="junta_riego"
+                                value={capitalizeEachWord(data.junta_riego)}
+                                className="mt-1 block w-full"
+                                autoComplete="junta_riego"
+                                onChange={onChangeHandler("junta_riego")}
+                                required
+                            />
+                            <InputError
+                                message={errors.junta_riego}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* Legalizada */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="is_legalizada"
+                                value={"Legalizada"}
+                            />
+                            <SelectComponent
+                                id="is_legalizada"
+                                name="is_legalizada"
+                                value={data.is_legalizada}
+                                onChange={onChangeHandler("is_legalizada")}
+                                options={isLegalizadaOptions}
+                                placeholder="Elegir una opción"
+                                required
+                            />
+                            <InputError
+                                message={errors.is_legalizada}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* fecha solicitud */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="fecha_solicitud"
+                                value={"Fecha de Solicitud"}
+                            />
+                            <TextInput
+                                id="fecha_solicitud"
+                                type="date"
+                                name="fecha_solicitud"
+                                value={data.fecha_solicitud}
+                                className="mt-1 block w-full"
+                                autoComplete="fecha_solicitud"
+                                onChange={onChangeHandler("fecha_solicitud")}
+                                required
+                            />
+                            <InputError
+                                message={errors.fecha_solicitud}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* fecha resolución */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="fecha_resolucion"
+                                value={"Fecha de Resolución"}
+                            />
+                            <TextInput
+                                id="fecha_resolucion"
+                                type="date"
+                                name="fecha_resolucion"
+                                value={data.fecha_resolucion}
+                                className="mt-1 block w-full"
+                                autoComplete="fecha_resolucion"
+                                onChange={onChangeHandler("fecha_resolucion")}
+                                required
+                            />
+                            <InputError
+                                message={errors.fecha_resolucion}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* numero de resolucion */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="num_resolucion"
+                                value={"Número de Resolución"}
+                            />
+                            <TextInput
+                                id="num_resolucion"
+                                type="text"
+                                name="num_resolucion"
+                                value={data.num_resolucion}
+                                className="mt-1 block w-full"
+                                autoComplete="num_resolucion"
+                                onChange={onChangeHandler("num_resolucion")}
+                                required
+                            />
+                            <InputError
+                                message={errors.num_resolucion}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* cantidad de beneficiarios */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="cantidad_beneficiarios"
+                                value={"Cantidad de Beneficiarios"}
+                            />
+                            <TextInput
+                                id="cantidad_beneficiarios"
+                                type="number"
+                                name="cantidad_beneficiarios"
+                                value={data.cantidad_beneficiarios}
+                                className="mt-1 block w-full"
+                                autoComplete="cantidad_beneficiarios"
+                                onChange={onChangeHandler(
+                                    "cantidad_beneficiarios"
+                                )}
+                                required
+                            />
+                            <InputError
+                                message={errors.cantidad_beneficiarios}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* tipo de riego */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="cod_tipo_riego"
+                                value={"Tipo de Riego"}
+                            />
+                            <SelectComponent
+                                id="cod_tipo_riego"
+                                name="cod_tipo_riego"
+                                placeholder="Elegir el tipo de riego"
+                                value={data.cod_tipo_riego}
+                                onChange={onChangeHandler("cod_tipo_riego")}
+                                options={tipoRiego}
+                                required
+                            />
+                            <InputError
+                                message={errors.cod_tipo_riego}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="p-6 text-gray-900">
+                            {`Datos del Presidente Provisional de la Junta de Riego`}
+                        </div>
+
+                        {/* Tipo Presidente */}
+
+                        {/* cedula presidente Provicional */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="cedula_presidente_junta_riego_p"
+                                value={"Cédula"}
+                            />
+                            <TextInput
+                                id="cedula_presidente_junta_riego_p"
+                                type="text"
+                                name="cedula_presidente_junta_riego_p"
+                                value={data.cedula_presidente_junta_riego_p}
+                                className="mt-1 block w-full"
+                                autoComplete="cedula_presidente_junta_riego_p"
+                                onChange={onChangeHandler(
+                                    "cedula_presidente_junta_riego_p"
+                                )}
+                                required
+                            />
+                            <InputError
+                                message={errors.cedula_presidente_junta_riego_p}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* nombres presidente Provicional */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="nombres_presidente_junta_riego_p"
+                                value={"Nombres"}
+                            />
+                            <TextInput
+                                id="nombres_presidente_junta_riego_p"
+                                type="text"
+                                name="nombres_presidente_junta_riego_p"
+                                value={data.nombres_presidente_junta_riego_p}
+                                className="mt-1 block w-full"
+                                autoComplete="nombres_presidente_junta_riego_p"
+                                onChange={onChangeHandler(
+                                    "nombres_presidente_junta_riego_p"
+                                )}
+                                required
+                            />
+                            <InputError
+                                message={
+                                    errors.nombres_presidente_junta_riego_p
+                                }
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* email presidente provisional */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="email_presidente_junta_riego_p"
+                                value={"Correo Electrónico"}
+                            />
+                            <TextInput
+                                id="email_presidente_junta_riego_p"
+                                type="email"
+                                name="email_presidente_junta_riego_p"
+                                value={data.email_presidente_junta_riego_p}
+                                className="mt-1 block w-full"
+                                autoComplete="email_presidente_junta_riego_p"
+                                onChange={onChangeHandler(
+                                    "email_presidente_junta_riego_p"
+                                )}
+                                required
+                            />
+                            <InputError
+                                message={errors.email_presidente_junta_riego_p}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* telefono de contacto presidente provisional */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="telefono_presidente_junta_riego_p"
+                                value={"Teléfono de Contacto"}
+                            />
+                            <TextInput
+                                id="telefono_presidente_junta_riego_p"
+                                type="text"
+                                name="telefono_presidente_junta_riego_p"
+                                value={data.telefono_presidente_junta_riego_p}
+                                className="mt-1 block w-full"
+                                autoComplete="telefono_presidente_junta_riego_p"
+                                onChange={onChangeHandler(
+                                    "telefono_presidente_junta_riego_p"
+                                )}
+                                required
+                            />
+                            <InputError
+                                message={
+                                    errors.telefono_presidente_junta_riego_p
+                                }
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* Fecha de solicitud de nombramiento presidente provisional */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="fecha_solicitud_nombramiento_presi_p"
+                                value={"Fecha de Emisión de Nombramiento"}
+                            />
+                            <TextInput
+                                id="fecha_solicitud_nombramiento_presi_p"
+                                type="date"
+                                name="fecha_solicitud_nombramiento_presi_p"
+                                value={
+                                    data.fecha_solicitud_nombramiento_presi_p
+                                }
+                                className="mt-1 block w-full"
+                                autoComplete="fecha_solicitud_nombramiento_presi_p"
+                                onChange={onChangeHandler(
+                                    "fecha_solicitud_nombramiento_presi_p"
+                                )}
+                            />
+                            <InputError
+                                message={
+                                    errors.fecha_solicitud_nombramiento_presi_p
+                                }
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* Fecha emsion de nombramiento presidente provisional */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="fecha_emision_nombramiento_presi_p"
+                                value={"Fecha de Emisión de Nombramiento"}
+                            />
+                            <TextInput
+                                id="fecha_emision_nombramiento_presi_p"
+                                type="date"
+                                name="fecha_emision_nombramiento_presi_p"
+                                value={data.fecha_emision_nombramiento_presi_p}
+                                className="mt-1 block w-full"
+                                autoComplete="fecha_emision_nombramiento_presi_p"
+                                onChange={onChangeHandler(
+                                    "fecha_emision_nombramiento_presi_p"
+                                )}
+                            />
+                            <InputError
+                                message={
+                                    errors.fecha_emision_nombramiento_presi_p
+                                }
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="p-6 text-gray-900">
+                            {`Datos del Presidente de la Junta de Riego`}
+                        </div>
+
+                        {/* Tipo Presidente */}
+
+                        {/* cedula presidente Electo */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="cedula_presidente_junta_riego_e"
+                                value={"Cédula"}
+                            />
+                            <TextInput
+                                id="cedula_presidente_junta_riego_e"
+                                type="text"
+                                name="cedula_presidente_junta_riego_e"
+                                value={data.cedula_presidente_junta_riego_e}
+                                className="mt-1 block w-full"
+                                autoComplete="cedula_presidente_junta_riego_e"
+                                onChange={onChangeHandler(
+                                    "cedula_presidente_junta_riego_e"
+                                )}
+                                required
+                            />
+                            <InputError
+                                message={errors.cedula_presidente_junta_riego_e}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* nombres presidente Electo */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="nombres_presidente_junta_riego_e"
+                                value={"Nombres"}
+                            />
+                            <TextInput
+                                id="nombres_presidente_junta_riego_e"
+                                type="text"
+                                name="nombres_presidente_junta_riego_e"
+                                value={data.nombres_presidente_junta_riego_e}
+                                className="mt-1 block w-full"
+                                autoComplete="nombres_presidente_junta_riego_e"
+                                onChange={onChangeHandler(
+                                    "nombres_presidente_junta_riego_e"
+                                )}
+                                required
+                            />
+                            <InputError
+                                message={
+                                    errors.nombres_presidente_junta_riego_e
+                                }
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* email presidente Electo */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="email_presidente_junta_riego_e"
+                                value={"Correo Electrónico"}
+                            />
+                            <TextInput
+                                id="email_presidente_junta_riego_e"
+                                type="email"
+                                name="email_presidente_junta_riego_e"
+                                value={data.email_presidente_junta_riego_e}
+                                className="mt-1 block w-full"
+                                autoComplete="email_presidente_junta_riego_e"
+                                onChange={onChangeHandler(
+                                    "email_presidente_junta_riego_e"
+                                )}
+                                required
+                            />
+                            <InputError
+                                message={errors.email_presidente_junta_riego_e}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* telefono de contacto presidente electo */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="telefono_presidente_junta_riego_e"
+                                value={"Teléfono de Contacto"}
+                            />
+                            <TextInput
+                                id="telefono_presidente_junta_riego_e"
+                                type="text"
+                                name="telefono_presidente_junta_riego_e"
+                                value={data.telefono_presidente_junta_riego_e}
+                                className="mt-1 block w-full"
+                                autoComplete="telefono_presidente_junta_riego_e"
+                                onChange={onChangeHandler(
+                                    "telefono_presidente_junta_riego_e"
+                                )}
+                                required
+                            />
+                            <InputError
+                                message={
+                                    errors.telefono_presidente_junta_riego_e
+                                }
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* fecha de caducidad de las funciones del presidente electo */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="fecha_caducidad"
+                                value={"Fecha de Caducidad"}
+                            />
+                            <TextInput
+                                id="fecha_caducidad"
+                                type="date"
+                                name="fecha_caducidad"
+                                value={data.fecha_caducidad}
+                                className="mt-1 block w-full"
+                                autoComplete="fecha_caducidad"
+                                onChange={onChangeHandler("fecha_caducidad")}
+                            />
+                            <InputError
+                                message={errors.fecha_caducidad}
+                                className="mt-2"
+                            />
+                        </div>
+
                         {/* BOTÓN GUARDAR */}
-                        <div>
+                        <div className="mb-6">
                             <button
                                 type="submit"
                                 className="inline-flex items-center px-4 py-2 bg-indigo-600 border 

@@ -21,7 +21,10 @@ class JuntasRiegoController extends Controller
      */
     public function create()
     {
-        return inertia('JuntasRiego/JuntasRiegoForm');
+        return inertia('JuntasRiego/JuntasRiegoForm', [
+            'tipo_riego' => DB::table('tipo_riego')->get(),
+            'tipo_presidente' => DB::table('tipo_presidente')->get(),
+        ]);
     }
 
     /**
