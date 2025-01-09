@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('presidente_junta_riego', function (Blueprint $table) {
             $table->id('cod_presidente_junta_riego');
-            $table->string('cedula_presidente_junta_riego', 10)->unique();
+            $table->string('cedula_presidente_junta_riego', 10);
             $table->string('nombres_presidente_junta_riego', 255);
             $table->string('tel_contacto_presidente_junta_riego', 10);
             $table->string('email_presidente_junta_riego', 255);

@@ -7,6 +7,7 @@ import TextInput from "@/Components/TextInput.jsx";
 import InputLabel from "@/Components/InputLabel.jsx";
 import InputError from "@/Components/InputError.jsx";
 import SelectComponent from "@/Components/Select.jsx";
+import TextAreaInput from "@/Components/TextAreaInput.jsx";
 
 const JuntasRiegoIndex = () => {
     const { user } = usePage().props.auth;
@@ -14,8 +15,6 @@ const JuntasRiegoIndex = () => {
     const { cod_oficina_tecnica } = user;
 
     const { tipo_riego } = usePage().props;
-
-    const { tipo_presidente } = usePage().props;
 
     const { data, setData, post, processing, errors, reset } = useForm({
         num_carpeta_junta_riego: "",
@@ -34,7 +33,6 @@ const JuntasRiegoIndex = () => {
         nombres_presidente_junta_riego_p: "",
         email_presidente_junta_riego_p: "",
         telefono_presidente_junta_riego_p: "",
-        fecha_nombramiento_presidente_junta_riego_p: "",
         fecha_solicitud_nombramiento_presi_p: "",
         fecha_emision_nombramiento_presi_p: "",
 
@@ -44,6 +42,8 @@ const JuntasRiegoIndex = () => {
         nombres_presidente_junta_riego_e: "",
         email_presidente_junta_riego_e: "",
         telefono_presidente_junta_riego_e: "",
+        fecha_caducidad: "",
+        observaciones: "",
     });
 
     // States for Provincia:
@@ -196,15 +196,30 @@ const JuntasRiegoIndex = () => {
             alert("Faltan datos: provincia, cantón o parroquia");
             return;
         }
+
         const formData = {
             ...data,
-            provincia: selectedProvince,
-            canton: selectedCanton,
-            parroquia: selectedParish,
-            presidente_provisional: 1,
-            presidente_electo: 2,
+            provincia_id: selectedProvince.id,
+            canton_id: selectedCanton.id,
+            parroquia_id: selectedParish.id,
+            // presidente_provisional: 1,
+            // presidente_electo: 2,
         };
+
         console.log("Form Data to be Submitted:", formData);
+
+        post(route("juntasRiego.store", formData), {
+            onSuccess: () => {
+                console.log(formData);
+                // If you want to reset some fields or do something after success:
+                reset();
+                alert("Junta de Riego creada con éxito!");
+            },
+            onError: (errors) => {
+                console.log("Log en la parte del error", formData);
+                console.error("Error al crear la junta:", errors);
+            },
+        });
     };
 
     const onChangeHandler = (fieldId) => (event) => {
@@ -362,6 +377,8 @@ const JuntasRiegoIndex = () => {
                                 type="number"
                                 name="num_carpeta_junta_riego"
                                 value={data.num_carpeta_junta_riego}
+                                min="1"
+                                step="1"
                                 className="mt-1 block w-full"
                                 autoComplete="num_carpeta_junta_riego"
                                 onChange={onChangeHandler(
@@ -534,6 +551,12 @@ const JuntasRiegoIndex = () => {
                         </div>
 
                         {/* Tipo Presidente */}
+                        <input
+                            hidden
+                            id="presidente_provisional"
+                            nombre="presidente_provisional"
+                            value={(data.presidente_provisional = 1)}
+                        ></input>
 
                         {/* cedula presidente Provicional */}
                         <div className="mt-4">
@@ -639,7 +662,7 @@ const JuntasRiegoIndex = () => {
                         <div className="mt-4">
                             <InputLabel
                                 htmlFor="fecha_solicitud_nombramiento_presi_p"
-                                value={"Fecha de Emisión de Nombramiento"}
+                                value={"Fecha de Solicitud de Nombramiento"}
                             />
                             <TextInput
                                 id="fecha_solicitud_nombramiento_presi_p"
@@ -692,7 +715,12 @@ const JuntasRiegoIndex = () => {
                         </div>
 
                         {/* Tipo Presidente */}
-
+                        <input
+                            hidden
+                            id="presidente_electo"
+                            nombre="presidente_electo"
+                            value={(data.presidente_electo = 2)}
+                        ></input>
                         {/* cedula presidente Electo */}
                         <div className="mt-4">
                             <InputLabel
@@ -814,6 +842,27 @@ const JuntasRiegoIndex = () => {
                             />
                         </div>
 
+                        {/* Observaciones */}
+                        <div className="mt-4">
+                            <InputLabel
+                                htmlFor="observaciones"
+                                value={"Observaciones"}
+                            />
+                            <TextAreaInput
+                                id="observaciones"
+                                name="observaciones"
+                                value={data.observaciones}
+                                className="mt-1 block w-full"
+                                onChange={onChangeHandler("observaciones")}
+                                placeholder="Ingrese sus observaciones aquí..."
+                                rows={5} // Optional: Adjust the number of visible text lines
+                            />
+                            <InputError
+                                message={errors.observaciones}
+                                className="mt-2"
+                            />
+                        </div>
+
                         {/* BOTÓN GUARDAR */}
                         <div className="mb-6">
                             <button
@@ -825,6 +874,7 @@ const JuntasRiegoIndex = () => {
                                         focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 
                                         transition ease-in-out duration-150 disabled:bg-gray-400"
                                 disabled={
+                                    processing ||
                                     !selectedProvince ||
                                     !selectedCanton ||
                                     !selectedParish
