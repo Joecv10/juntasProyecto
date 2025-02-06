@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('juntas_riego', function (Blueprint $table) {
             $table->id('cod_junta_riego');
-            $table->integer('num_carpeta_junta_riego')->unique();
+            $table->integer('num_carpeta_junta_riego');
             $table->string('junta_riego', 255);
             $table->boolean('is_legalizada');
             $table->date('fecha_solicitud')->nullable();

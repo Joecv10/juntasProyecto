@@ -31,10 +31,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-
-
-
 Route::resource('users', UsersController::class)->middleware(['auth', 'verified']);
 
 Route::resource('juntasRiego', JuntasRiegoController::class,)->middleware(['auth', 'verified']);
@@ -45,8 +41,19 @@ Route::get('/buscar-parroquias', [LugarController::class, 'buscarParroquias'])->
 Route::get('/provincia-by-name', [LugarController::class, 'buscarProvinciaByName'])->name('provincia.byname');
 Route::get('/oficina-tecnica/{cod_oficina_tecnica}/provincia', [LugarController::class, 'getProvincia'])->name('oficina-tecnica.provincia');
 
+// 1) A GET route to display a "Report form" page (filters + columns)
+Route::get('/reports', [JuntasRiegoController::class, 'reportForm'])
+    ->name('juntasRiego.reportForm')
+    ->middleware(['auth', 'verified']);
 
+// 2) A GET route that processes the form’s query (filters, columns)
+//    and generates either a PDF or Excel file.
+Route::get('/generate-report', [JuntasRiegoController::class, 'generateReport'])
+    ->name('juntasRiego.generateReport')
+    ->middleware(['auth', 'verified']);
 
-
+Route::delete('/deletePresident/{id}', [JuntasRiegoController::class, 'deletePresident'])
+    ->name('juntasRiego.deletePresident')
+    ->middleware(['auth', 'verified']);
 
 require __DIR__ . '/auth.php';

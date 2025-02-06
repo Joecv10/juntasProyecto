@@ -16,6 +16,6 @@ class PresidenteJuntaRiego extends Model
         'email_presidente_junta_riego',
         'tel_contacto_presidente_junta_riego',
         'email_presidente_junta_riego',
-        'fecha_caducida',
+        'fecha_caducidad',
     ];
 }

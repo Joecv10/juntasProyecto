@@ -40,6 +40,12 @@ const UsersIndex = ({ listaUsuarios }) => {
             <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                 <div className="overflow-hidden shadow-md sm:rounded-lg">
                     <table className="min-w-full">
+                        <caption className="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                            Usuarios Registrados
+                            <p className="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                                Lista de usuarios registrados
+                            </p>
+                        </caption>
                         <thead className="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th

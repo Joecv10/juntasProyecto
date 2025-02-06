@@ -197,26 +197,24 @@ const JuntasRiegoIndex = () => {
             return;
         }
 
-        const formData = {
-            ...data,
+        setData((prevData) => ({
+            ...prevData,
             provincia_id: selectedProvince.id,
             canton_id: selectedCanton.id,
             parroquia_id: selectedParish.id,
-            // presidente_provisional: 1,
-            // presidente_electo: 2,
-        };
+        }));
 
-        console.log("Form Data to be Submitted:", formData);
+        console.log("Form Data to be Submitted:", data);
 
-        post(route("juntasRiego.store", formData), {
+        post(route("juntasRiego.store"), {
             onSuccess: () => {
-                console.log(formData);
+                console.log(data);
                 // If you want to reset some fields or do something after success:
                 reset();
                 alert("Junta de Riego creada con éxito!");
             },
             onError: (errors) => {
-                console.log("Log en la parte del error", formData);
+                console.log("Log en la parte del error", data);
                 console.error("Error al crear la junta:", errors);
             },
         });

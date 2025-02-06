@@ -6,3 +6,13 @@ export const capitalizeEachWord = (str) => {
         )
         .join(" ");
 };
+
+export const createSelectOptionsFormatter = (valueKey, labelKey) => (array) =>
+    array.map((item) => ({
+        value: item[valueKey],
+        label: item[labelKey],
+    }));
+
+export const onChangeHandler = (fieldId) => (event) => {
+    setData(fieldId, event.target.value);
+};
