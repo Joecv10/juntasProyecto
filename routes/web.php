@@ -56,4 +56,12 @@ Route::delete('/deletePresident/{id}', [JuntasRiegoController::class, 'deletePre
     ->name('juntasRiego.deletePresident')
     ->middleware(['auth', 'verified']);
 
+Route::get('/{juntasRiego}/presidentes', [JuntasRiegoController::class, 'registerPresidenteForm'])
+    ->name('juntasRiego.presidente')
+    ->middleware(['auth', 'verified']);
+
+Route::post('/presidentes', [JuntasRiegoController::class, 'registerPresidente'])
+    ->name('juntasRiego.registerPresidente')
+    ->middleware(['auth', 'verified']);
+
 require __DIR__ . '/auth.php';

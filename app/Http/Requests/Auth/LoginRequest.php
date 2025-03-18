@@ -57,7 +57,7 @@ class LoginRequest extends FormRequest
         // Check if the user is active
         if (!$user->is_active) {
             throw ValidationException::withMessages([
-                'email' => ['Su cuenta ha sido desactivada. Por Favor contacte a soporte.'],
+                'email' => ['Su cuenta ha sido eliminada. Por Favor contacte a soporte.'],
             ]);
         }
 

@@ -157,16 +157,21 @@ class JuntasRiegoController extends Controller
             'cedula_presidente_junta_riego_p' => 'required|string|size:10',
             'nombres_presidente_junta_riego_p' => 'required|string|max:255',
             'email_presidente_junta_riego_p' => 'email',
-            'telefono_presidente_junta_riego_p' => 'string|max:15',
+            'telefono_presidente_junta_riego_p' => 'string|max:15|size:10',
             'fecha_solicitud_nombramiento_presi_p' => 'date',
             'fecha_emision_nombramiento_presi_p' => 'date',
             'presidente_electo' => 'required|integer',
             'cedula_presidente_junta_riego_e' => 'string|size:10',
             'nombres_presidente_junta_riego_e' => 'string|max:255',
             'email_presidente_junta_riego_e' => 'email',
-            'telefono_presidente_junta_riego_e' => 'string|max:15',
+            'telefono_presidente_junta_riego_e' => 'string|max:15|size:10',
             'fecha_caducidad' => 'date',
             'observaciones' => 'string|max:255',
+        ], [
+            'cedula_presidente_junta_riego_p.size' => 'La cédula debe tener una longitud de 10 digitos',
+            'cedula_presidente_junta_riego_e.size' => 'La cédula debe tener una longitud de 10 digitos',
+            'telefono_presidente_junta_riego_p.size' => 'El teléfono debe tener una longitud de 10 digitos',
+            'telefono_presidente_junta_riego_e.size' => 'El teléfono debe tener una longitud de 10 digitos',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -337,6 +342,57 @@ class JuntasRiegoController extends Controller
         $junta->save();
 
         return redirect()->route('juntasRiego.index');
+    }
+
+    // Añadir Presidente
+    public function registerPresidenteForm($codJuntaRiego)
+    {
+        return inertia('JuntasRiego/RegisterPresident', [
+            'codJuntaRiego' => $codJuntaRiego,
+        ]);
+    }
+
+    public function registerPresidente(Request $request)
+    {
+        $request->validate([
+            'cod_junta_riego' => 'required|integer',
+            'presidente_electo' => 'required|integer',
+            'cedula_presidente_junta_riego_e' => 'string|size:10',
+            'nombres_presidente_junta_riego_e' => 'string|max:255',
+            'email_presidente_junta_riego_e' => 'email',
+            'telefono_presidente_junta_riego_e' => 'string|max:15|size:10',
+            'fecha_caducidad' => 'date',
+            'observaciones' => 'string|max:255',
+        ], [
+            'cedula_presidente_junta_riego_e.size' => 'La cédula debe tener una longitud de 10 digitos',
+            'telefono_presidente_junta_riego_e.size' => 'El teléfono debe tener una longitud de 10 digitos',
+        ]);
+
+        DB::transaction(function () use ($request) {
+
+            // 3) Insert into `presidente_junta_riego` for the "presidente electo"
+            // (if it’s required in your design)
+            $presidenteElecto = PresidenteJuntaRiego::create([
+                'cedula_presidente_junta_riego'  => $request->cedula_presidente_junta_riego_e,
+                'nombres_presidente_junta_riego' => strtoupper(trim($request->nombres_presidente_junta_riego_e)),
+                'email_presidente_junta_riego'   => strtolower(trim($request->email_presidente_junta_riego_e)),
+                'tel_contacto_presidente_junta_riego' => $request->telefono_presidente_junta_riego_e,
+                'fecha_caducidad' => $request->fecha_caducidad,
+                // etc...
+            ]);
+
+            HistoricoPresidentesJR::create([
+                'cod_junta_riego' => $request->cod_junta_riego,
+                'cod_presidente_junta_riego' => $presidenteElecto->cod_presidente_junta_riego,
+                'cod_tipo_presidente' => $request->presidente_electo,
+                'observaciones'   => $request->observaciones,
+            ]);
+
+            // If any of the above fails (throws an exception),
+            // Laravel will roll back the entire transaction.
+        });
+
+        return redirect()->route('juntasRiego.show', $request->cod_junta_riego);
     }
 
     public function reportForm()

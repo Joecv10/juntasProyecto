@@ -7,3 +7,8 @@ export const exportFormatOptions = [
     { value: "pdf", label: "PDF" },
     { value: "excel", label: "Excel" },
 ];
+
+export const presidenteElectoOptions = [
+    { value: "2", label: "Electo" },
+    { value: "3", label: "Ratificado" },
+];

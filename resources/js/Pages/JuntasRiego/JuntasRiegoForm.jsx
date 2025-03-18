@@ -208,8 +208,6 @@ const JuntasRiegoIndex = () => {
 
         post(route("juntasRiego.store"), {
             onSuccess: () => {
-                console.log(data);
-                // If you want to reset some fields or do something after success:
                 reset();
                 alert("Junta de Riego creada con éxito!");
             },

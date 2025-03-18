@@ -9,7 +9,7 @@ const JuntaView = ({ juntaRiego, presidenteProv, presidenteJunta }) => {
     const [junta_Riego_single] = juntaRiego;
     const [presidente_provisional] = presidenteProv;
 
-    console.log(junta_Riego_single);
+    console.log("Junta Riego", junta_Riego_single);
 
     // To delete a Junta
     const [deleteJuntaModalOpen, setDeleteJuntaModalOpen] = useState(false);
@@ -371,6 +371,23 @@ const JuntaView = ({ juntaRiego, presidenteProv, presidenteJunta }) => {
                                                         </div>
                                                     </>
                                                 )}
+                                            </div>
+                                            {/* Now, outside the flex container, add the button */}
+                                            <div className="mt-8 flex justify-end">
+                                                <button
+                                                    type="button"
+                                                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-600 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    onClick={() =>
+                                                        router.visit(
+                                                            route(
+                                                                "juntasRiego.presidente",
+                                                                junta_Riego_single.cod_junta_riego
+                                                            )
+                                                        )
+                                                    }
+                                                >
+                                                    Agregar Presidente
+                                                </button>
                                             </div>
                                         </div>
                                         {/* End presidentes section */}
